@@ -1,0 +1,1 @@
+export const serviceAdd = "http://campus.help.com/api"
