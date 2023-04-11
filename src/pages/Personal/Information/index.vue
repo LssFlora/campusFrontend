@@ -9,15 +9,16 @@
           ></el-avatar>
           <el-upload
             class="upload-demo"
-            auto-upload="false"
-            action="http://campus.help.com/api/user/userInfo/updatePicture"
-            :headers={token}
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
-            accept=".jpeg, .jpg, .gif, .png"
-             multiple
-            :limit="1"
+            ref="upload"
+            action="string"
             :file-list="fileList"
+            :auto-upload="false"
+            :http-request="uploadFile"
+            :on-change="handleChange"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :before-upload="beforeAvatarUpload"
+            multiple="multiple"
           >
             <el-tooltip
               class="item"
@@ -25,11 +26,14 @@
               content="只能上传jpeg/jpg/gif/png文件，且不超过500kb"
               placement="right"
             >
-              <el-button size="small" type="primary" @click="submitAvatar"
-                >点击上传</el-button
+              <el-button size="small" type="primary" @click="delFile"
+                >选取文件</el-button
               >
             </el-tooltip>
           </el-upload>
+          <el-button size="small" type="primary" @click="submitAva"
+            >点击上传</el-button
+          >
         </div>
       </el-form-item>
       <el-form-item label="昵称" size="small">
@@ -68,6 +72,8 @@ export default {
       },
       fileList: [],
       serviceAdd,
+      // 不支持多选
+      multiple: false,
     };
   },
   mounted() {
@@ -77,10 +83,11 @@ export default {
   },
   computed: {
     token() {
-      return this.$store.state.user.token;
+      return localStorage.getItem("token");
     },
   },
   methods: {
+    // 更新信息
     onSubmit() {
       // console.log("submit!");
       this.$store.dispatch("submitInfo", this.form);
@@ -91,19 +98,13 @@ export default {
     handlePreview(file) {
       console.log(file);
     },
-    handleAvatarSuccess(){
-      console.log("上传成功！")
-    },
-
-    submitAvatar() {
-      // this.$refs.upload.submit()
-    },
     beforeAvatarUpload(file) {
+      console.log("file", file);
       const isJPG =
         file.type === "image/jpeg" ||
         file.type === "image/jpg" ||
         file.type === "image/png";
-        // 限制只能3M以内的图片
+      // 限制只能3M以内的图片
       const isLt2M = file.size / 1024 / 1024 < 3;
 
       if (!isJPG) {
@@ -113,6 +114,35 @@ export default {
         this.$message.error("上传头像图片大小不能超过 3MB!");
       }
       return isJPG && isLt2M;
+    },
+    //点击上传文件触发的额外事件,清空fileList
+    //点击上传文件触发的额外事件,清空fileList
+    delFile() {
+      this.fileList = [];
+    },
+    submitAva() {
+      let formData = new FormData();
+      formData.append("file", this.fileList[0]); //拿到存在fileList的文件存放到formData中
+      //下面数据是我自己设置的数据,可自行添加数据到formData(使用键值对方式存储)
+      // formData.append("title", this.title);
+      this.$store.dispatch("submitAva", formData);
+    },
+    handleChange(file, fileList) {
+      this.fileList = fileList;
+      // console.log(this.fileList, "sb");
+    },
+    //自定义上传文件
+    uploadFile(file) {
+      this.formData.append("file", file.file);
+      // console.log(file.file, "sb2");
+    },
+    //删除文件
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    // 点击文件
+    handlePreview(file) {
+      console.log(file);
     },
   },
 };

@@ -1,1 +1,1 @@
-export const serviceAdd = "http://campus.help.com/api"
+export const serviceAdd = "http://4jz5tg.natappfree.cc"

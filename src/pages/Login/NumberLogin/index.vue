@@ -113,7 +113,6 @@ export default {
     async submitForm() {
       const { userName, password, code } = this.ruleForm;
       try {
-        this.$store.dispatch("token","")
         await this.$store.dispatch("login", { userName, password, code });
         if (localStorage.getItem("token")) {
           this.$router.push("/home");

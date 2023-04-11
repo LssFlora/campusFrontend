@@ -41,4 +41,12 @@ export const reqsubmitInfo = (data) => {
         data,
     })
 }
-
+// 上传头像
+export const reqsubmitAva = (data) => {
+    return requests({
+        url: "/user/userInfo/updatePicture",
+        method: "post",
+        data,
+        // contentType: "multipart/form-data"
+    })
+}

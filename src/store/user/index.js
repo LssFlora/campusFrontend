@@ -1,4 +1,4 @@
-import { reqLogin, reqsubmitInfo, reqGetInfo,reqLogOut } from "@/services/api"
+import { reqLogin, reqsubmitInfo, reqGetInfo, reqLogOut, reqsubmitAva } from "@/services/api"
 import { Message } from "element-ui";
 const actions = {
     // 注册
@@ -27,9 +27,9 @@ const actions = {
     // 退出登录
     async logOut({ commit }) {
         let result = await reqLogOut();
-        localStorage.setItem("token","")
+        localStorage.setItem("token", "")
         if (result.code == 200) {
-            localStorage.setItem("token","")
+            localStorage.setItem("token", "")
             commit("LOGINOUT")
             Message({
                 type: "success",
@@ -62,13 +62,28 @@ const actions = {
                 message: "更新失败"
             });
         }
+    },
+    // 上传头像
+    async submitAva({ commit }, picture) {
+        let result = await reqsubmitAva(picture)
+        if (result.code == 200) {
+            Message({
+                type: "success",
+                message: "上传成功"
+            });
+        } else {
+            Message({
+                type: "error",
+                message: "上传失败"
+            });
+        }
     }
 }
 const mutations = {
     // 登录
     LOGIN(state, token) {
         // state.token = token
-        localStorage.setItem("token",token)
+        localStorage.setItem("token", token)
         // console.log("state token", token);
     },
     // 获取用户信息
