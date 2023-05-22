@@ -44,9 +44,51 @@ export const reqsubmitInfo = (data) => {
 // 上传头像
 export const reqsubmitAva = (data) => {
     return requests({
-        url: "/user/userInfo/updatePicture",
+        url: `/user/userInfo/updatePicture?pictureUrl=${data}`,
         method: "post",
-        data,
-        // contentType: "multipart/form-data"
+    })
+}
+// 分页获取任务大厅任务
+export const reqTaskHall = (page) => {
+    return requests({
+        url: `/task/taskInfo/getNewOrder/${page}/12`,
+        method: "get",
+    })
+}
+// 订单号获取订单
+export const reqTaskDetail = (orderNumber) => {
+    return requests({
+        url: `/task/taskInfo/getinfo/${orderNumber}`,
+        method: "get",
+    })
+}
+// 根据状态获取我的发布订单
+export const reqTaskByStatus = (status) => {
+    return requests({
+        url: `/task/taskInfo/getSelfOrderByStatus/${status}`,
+        method: "get",
+    })
+}
+// 根据状态获取我的抢单订单
+export const reqMyTaskByStatus = (status) => {
+    return requests({
+        url: `/task/taskInfo/getOrderByStatus/${status}`,
+        method: "get",
+    })
+}
+// 抢单
+export const reqRobTask = (data) => {
+    const { orderNumber, userId } = data
+    return requests({
+        url: `/task/taskStatusInfo/getNewTask?orderNumber=${orderNumber}&userId=${userId}`,
+        method: "put",
+    })
+}
+// 抢单
+export const reqEndOrCancleTask = (data) => {
+    const { orderNumber, status } = data
+    return requests({
+        url: `/task/taskStatusInfo/updateOrderStatus?orderNumber=${orderNumber}&status=${status}`,
+        method: "post",
     })
 }

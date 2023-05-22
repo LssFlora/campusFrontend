@@ -41,17 +41,15 @@ requests.interceptors.request.use((config) => {
 // 设置响应拦截器
 requests.interceptors.response.use(
   // 成功的回调函数：服务器相应数据回来以后，响应拦截器可以检测到，做一些事情
-  async (res) => {
+  (res) => {
     // nProgress.done();
-    console.log("res", res);
     if (res.data.code === 4111) {
-      await store.dispatch('logOut')
       localStorage.setItem("token", "")
+      this.$router.push("/login")
       Message({
         type: "warning",
         message: "请重新登录"
       });
-      this.$router.push("/login")
     }
     return res.data
   },

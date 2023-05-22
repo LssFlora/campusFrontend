@@ -2,334 +2,49 @@
   <div>
     <Header />
     <div class="mainBox">
-      <el-aside class="aside"> 广告位招商中... </el-aside>
+      <el-aside class="aside"
+        ><el-image
+          src="https://img-operation.csdnimg.cn/csdn/silkroad/img/1683800902930.jpg"
+          fit="fit"
+        ></el-image
+      ></el-aside>
       <el-main class="main">
         <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div>
-          </el-col>
-          <el-col :span="12"
-            ><div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div></el-col
+          <el-page-header @back="goBack" :style="{ display: isBackShow }">
+          </el-page-header>
+          <el-button
+            type="primary"
+            @click="goMyTask"
+            style="
+              position: fixed;
+              right: 15px;
+              top: 200px;
+              width: 80px;
+              height: 80px;
+            "
+            circle
+            size="medium"
+            >我的任务</el-button
+          >
+          <el-button
+            type="primary"
+            @click="goLachTask"
+            style="
+              position: fixed;
+              right: 15px;
+              top: 300px;
+              width: 80px;
+              height: 80px;
+            "
+            circle
+            size="medium"
+            :style="{
+              display: path.indexOf('lachTask') != -1 ? 'none' : 'block',
+            }"
+            >发布任务</el-button
           >
         </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div>
-          </el-col>
-          <el-col :span="12"
-            ><div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div></el-col
-          >
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div>
-          </el-col>
-          <el-col :span="12"
-            ><div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div></el-col
-          >
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div>
-          </el-col>
-          <el-col :span="12"
-            ><div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div></el-col
-          >
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div>
-          </el-col>
-          <el-col :span="12"
-            ><div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div></el-col
-          >
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div>
-          </el-col>
-          <el-col :span="12"
-            ><div class="grid-content bg-purple">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
-                <span style="float: left; margin-left: 10px">
-                  <el-avatar
-                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  ></el-avatar>
-                </span>
-                <span style="float: left; line-height: 44px"> 跑腿拿快递</span>
-                <span
-                  style="float: right; margin-right: 10px; line-height: 44px"
-                >
-                  <el-tag type="success"> 特单任务&nbsp; </el-tag>
-                </span>
-                <span
-                  style="
-                    float: right;
-                    line-height: 44px;
-                    color: red;
-                    margin-right: 10px;
-                  "
-                  >佣金￥5</span
-                >
-              </el-card>
-            </div></el-col
-          >
-        </el-row>
-        <el-pagination background layout="prev, pager, next" :total="1000">
-        </el-pagination>
+        <router-view :taskType="0 + ''" :task="task"></router-view>
       </el-main>
     </div>
   </div>
@@ -339,6 +54,55 @@
 import Header from "@/components/Header";
 export default {
   components: { Header },
+  data() {
+    return {
+      isBackShow: "",
+    };
+  },
+  watch: {
+    path(newValue, oldValue) {
+      if (newValue.indexOf("taskDetail") !== -1) {
+        this.isBackShow = "block";
+      } else {
+        this.isBackShow = "none";
+      }
+    },
+  },
+  methods: {
+    goMyTask() {
+      this.$router.push("/mine/myTask");
+    },
+    goLachTask() {
+      this.$router.push("/taskHall/lachTask");
+    },
+    // 获取任务
+    getTask(page) {
+      this.$store.dispatch("getTaskHall", page);
+    },
+    // 获取任务详情并跳转详情页
+    goTaskDetail(orderNumber, avatar) {
+      this.$store.dispatch("getTaskDetail", orderNumber);
+      if (this.$store.state.task.taskDetail) {
+        this.task = this.$store.state.task.taskDetail;
+        this.$router.push({ path: "/taskDetail", query: { avatar: avatar } });
+      }
+    },
+    goBack() {
+      this.$router.push("/taskHall/taskList");
+    },
+  },
+  mounted() {
+    this.$store.dispatch("getTaskHall", 1);
+    this.isBackShow = "none";
+  },
+  computed: {
+    task() {
+      return this.$store.state.task.task;
+    },
+    path() {
+      return this.$route.path;
+    },
+  },
 };
 </script>
 
@@ -352,8 +116,6 @@ export default {
 /* aside */
 .aside {
   height: 509px;
-  line-height: 509px;
-  background-color: pink;
   flex: 1 1 25%;
 }
 /* main */

@@ -10,13 +10,17 @@ const actions = {
     },
     // 登录
     async login({ commit }, { code, userName, password }) {
+        if (localStorage.getItem("token"))
+            localStorage.setItem("token", "")
         let result = await reqLogin({ code, userName, password });
         if (result.code == 200) {
+            console.log("result", result);
+            localStorage.setItem("token", result.data.token)
             Message({
                 type: "success",
                 message: "登录成功"
             });
-            commit("LOGIN", result.data.token)
+            commit("LOGIN", result.data)
         } else {
             Message({
                 type: "error",
@@ -26,8 +30,8 @@ const actions = {
     },
     // 退出登录
     async logOut({ commit }) {
-        let result = await reqLogOut();
         localStorage.setItem("token", "")
+        let result = await reqLogOut();
         if (result.code == 200) {
             localStorage.setItem("token", "")
             commit("LOGINOUT")
@@ -44,6 +48,7 @@ const actions = {
     async getUserInfo({ commit }) {
         let result = await reqGetInfo()
         if (result.code == 200) {
+            console.log("222", result.data);
             commit("GETUSERINFO", result.data)
         }
     },
@@ -64,26 +69,29 @@ const actions = {
         }
     },
     // 上传头像
-    async submitAva({ commit }, picture) {
-        let result = await reqsubmitAva(picture)
+    async submitAva({ commit }, pictureUrl) {
+        console.log("url", pictureUrl);
+        let result = await reqsubmitAva(pictureUrl)
         if (result.code == 200) {
             Message({
                 type: "success",
                 message: "上传成功"
             });
+            commit("SUBMITAVA", pictureUrl)
         } else {
             Message({
                 type: "error",
                 message: "上传失败"
             });
         }
-    }
+    },
 }
 const mutations = {
     // 登录
-    LOGIN(state, token) {
+    LOGIN(state, data) {
         // state.token = token
-        localStorage.setItem("token", token)
+        state.userInfo = data.useInfo
+        console.log("userInfo", state.userInfo);
         // console.log("state token", token);
     },
     // 获取用户信息
@@ -93,7 +101,11 @@ const mutations = {
     // 登出
     LOGINOUT(state) {
         state.userInfo = {};
-    }
+    },
+    // 上传头像
+    SUBMITAVA(state, data) {
+        state = { ...state, avatar: data }
+    },
 }
 const state = {
     // token: "",

@@ -1,58 +1,63 @@
 <template>
   <div style="width: 100%">
     <el-form ref="form" :model="form" label-width="80px" class="formStyle">
-      <el-form-item label="头像">
+      <el-form-item>
         <div class="block">
-          <el-avatar
-            :size="70"
-            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-          ></el-avatar>
-          <el-upload
-            class="upload-demo"
-            ref="upload"
-            action="string"
-            :file-list="fileList"
-            :auto-upload="false"
-            :http-request="uploadFile"
-            :on-change="handleChange"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-upload="beforeAvatarUpload"
-            multiple="multiple"
+          <el-avatar :size="70" :src="form.avatar"></el-avatar>
+          <input
+            type="file"
+            ref="imageInput"
+            :style="{ display: isShow ? 'inline-block' : 'none' }"
+          />
+          <button
+            v-on:click="upload()"
+            :style="{ display: isShow ? 'inline-block' : 'none' }"
           >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="只能上传jpeg/jpg/gif/png文件，且不超过500kb"
-              placement="right"
-            >
-              <el-button size="small" type="primary" @click="delFile"
-                >选取文件</el-button
-              >
-            </el-tooltip>
-          </el-upload>
-          <el-button size="small" type="primary" @click="submitAva"
-            >点击上传</el-button
-          >
+            提交
+          </button>
         </div>
       </el-form-item>
+      <el-form-item label="评分" size="small">
+        <el-rate :value="form.rate" :colors="colors" disabled> </el-rate>
+      </el-form-item>
       <el-form-item label="昵称" size="small">
-        <el-input type="text" v-model="form.nickName"></el-input>
+        <el-input
+          type="text"
+          v-model="form.nickName"
+          :disabled="!isShow"
+        ></el-input>
       </el-form-item>
       <el-form-item label="性别" size="small">
-        <el-radio-group v-model="form.sex">
+        <el-radio-group v-model="form.sex" :disabled="!isShow">
           <el-radio :label="0">男</el-radio>
           <el-radio :label="1">女</el-radio>
           <el-radio :label="2">其他</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="手机号" size="small">
-        <el-input type="text" v-model="form.phoneNumber"></el-input>
+        <el-input
+          type="text"
+          v-model="form.phoneNumber"
+          :disabled="!isShow"
+        ></el-input>
       </el-form-item>
       <el-form-item label="邮箱" size="small">
-        <el-input type="email" v-model="form.email"></el-input>
+        <el-input
+          type="email"
+          v-model="form.email"
+          :disabled="!isShow"
+        ></el-input>
       </el-form-item>
+
       <el-form-item>
+        <el-button
+          type="primary"
+          @click="setIsShow"
+          :style="{ display: isShow ? 'none' : 'inline-block' }"
+          >编辑</el-button
+        >
+      </el-form-item>
+      <el-form-item :style="{ display: isShow ? 'block' : 'none' }">
         <el-button type="primary" @click="onSubmit">保存</el-button>
       </el-form-item>
     </el-form>
@@ -61,6 +66,7 @@
 
 <script>
 import { serviceAdd } from "@/services/servceAdd";
+const OSS = require("ali-oss");
 export default {
   data() {
     return {
@@ -72,77 +78,60 @@ export default {
       },
       fileList: [],
       serviceAdd,
+      isShow: false,
       // 不支持多选
       multiple: false,
+      colors: ["#99A9BF", "#F7BA2A", "#FF9900"], // 等同于 { 2: '#99A9BF', 4: { value: '#F7BA2A', excluded: true }, 5: '#FF9900' }
     };
   },
   mounted() {
-    this.$store.dispatch("getUserInfo");
-    this.form = this.$store.state.user.userInfo.user;
-    console.log("get form", this.form);
+    this.form = this.$store.state.user.userInfo;
+    console.log("form", this.form);
   },
   computed: {
     token() {
       return localStorage.getItem("token");
     },
+    avaUrl() {
+      return this.$store.state.user.userInfo.avatar;
+    },
+    headPortraitSrc() {
+      return this.form.avatar;
+    },
   },
   methods: {
     // 更新信息
-    onSubmit() {
+    async onSubmit() {
       // console.log("submit!");
-      this.$store.dispatch("submitInfo", this.form);
+      await this.$store.dispatch("submitInfo", this.form);
+      this.isShow = !this.isShow;
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
+    upload() {
+      let client = new OSS({
+        // 以下信息可以在阿里云上查看
+        region: "oss-cn-beijing", // 服务器集群地区
+        accessKeyId: "LTAI5tLAUYNKmPj7cbMJPsEp", // accessKeyId
+        accessKeySecret: "ae6y6bxR4ZWBnw5ly0uVzEItb4k5VL", // accessKeySecret
+        // stsToken 可以不写但是不安全
+        // stsToken: 'xxx', // 签名token
+        bucket: "campus-help-picture", // 阿里云上存储的 Bucket名称
+      });
+      const file = this.$refs.imageInput.files[0]; // 获取文件
+      const filePathArr = file.name.split(".");
+      let path = `/user/avatar/${this.$store.state.user.userInfo.id}.${
+        filePathArr[filePathArr.length - 1]
+      }`; // 路径以及文件名，根据需求定义
+      var response = client.put(path, file); // 上传并获取响应
+      response.then((res) => {
+        // 获取返回的文件url
+        // console.log(res.url)
+        this.headPortraitSrc = res.url; // 并设置给页面上图片所绑定的源
+        this.$store.dispatch("submitAva", res.url);
+      });
+      // console.log(response)
     },
-    handlePreview(file) {
-      console.log(file);
-    },
-    beforeAvatarUpload(file) {
-      console.log("file", file);
-      const isJPG =
-        file.type === "image/jpeg" ||
-        file.type === "image/jpg" ||
-        file.type === "image/png";
-      // 限制只能3M以内的图片
-      const isLt2M = file.size / 1024 / 1024 < 3;
-
-      if (!isJPG) {
-        this.$message.error("图片只能是 JPG 或者 PNG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 3MB!");
-      }
-      return isJPG && isLt2M;
-    },
-    //点击上传文件触发的额外事件,清空fileList
-    //点击上传文件触发的额外事件,清空fileList
-    delFile() {
-      this.fileList = [];
-    },
-    submitAva() {
-      let formData = new FormData();
-      formData.append("file", this.fileList[0]); //拿到存在fileList的文件存放到formData中
-      //下面数据是我自己设置的数据,可自行添加数据到formData(使用键值对方式存储)
-      // formData.append("title", this.title);
-      this.$store.dispatch("submitAva", formData);
-    },
-    handleChange(file, fileList) {
-      this.fileList = fileList;
-      // console.log(this.fileList, "sb");
-    },
-    //自定义上传文件
-    uploadFile(file) {
-      this.formData.append("file", file.file);
-      // console.log(file.file, "sb2");
-    },
-    //删除文件
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    // 点击文件
-    handlePreview(file) {
-      console.log(file);
+    setIsShow() {
+      this.isShow = !this.isShow;
     },
   },
 };

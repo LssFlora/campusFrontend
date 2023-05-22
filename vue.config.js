@@ -6,8 +6,8 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://4jz5tg.natappfree.cc',
-        pathRewrite: { '^/api': '' },
+        target: 'http://campus-help.natapp1.cc',
+        // pathRewrite: { '^/api': '' },
       },
     },
   },

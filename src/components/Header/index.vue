@@ -9,20 +9,24 @@
       >
       <div class="centerItem">
         <el-button type="text" @click="goHome">首页</el-button>
-        <el-button type="text">类别</el-button>
-        <el-button type="text">通知</el-button>
+        <el-button type="text" @click="goMine">我的</el-button>
+        <el-button type="text" @click="goAnnounce">公告</el-button>
       </div>
       <div class="rightItem">
-        <div style="margin-top:-7px;margin-right:23px" @click="checkLogOut">
-          <el-button type="primary" icon="el-icon-switch-button" circle></el-button>
+        <div style="margin-top: -7px; margin-right: 23px" @click="checkLogOut">
+          <el-button
+            type="primary"
+            icon="el-icon-switch-button"
+            circle
+          ></el-button>
         </div>
         <div style="width: 100px" @click="goPersonal">
-          <p style="font-size: 15px; width: 90px">爱吃香菜的猫</p>
+          <p style="font-size: 15px; width: 90px">
+            {{ this.$store.state.user.userInfo.nickName }}
+          </p>
         </div>
         <div style="margin-top: 7px" @click="goPersonal">
-          <el-avatar
-            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-          ></el-avatar>
+          <el-avatar :src="avaUrl"></el-avatar>
         </div>
       </div>
     </el-header>
@@ -31,6 +35,14 @@
 
 <script>
 export default {
+  computed: {
+    nickName() {
+      return this.$store.state.user.userInfo.nickName;
+    },
+    avaUrl() {
+      return this.$store.state.user.userInfo.avatar;
+    },
+  },
   methods: {
     goHome() {
       this.$router.push("/home");
@@ -38,21 +50,32 @@ export default {
     goPersonal() {
       this.$router.push("/personal/information");
     },
-     checkLogOut() {
-        this.$confirm('确认退出登录?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-           this.$store.dispatch("logOut")
-      this.$router.push("/login")
-        }).catch(() => {
+    checkLogOut() {
+      this.$confirm("确认退出登录?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$store.dispatch("logOut");
+          this.$router.push("/login");
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '取消退出'
-          });          
+            type: "info",
+            message: "取消退出",
+          });
         });
-      }
+    },
+    goMine() {
+      this.$router.push("/mine/myTask/taskList");
+    },
+    goAnnounce() {
+      this.$router.push("/announceHall/allAnnounce");
+    },
+  },
+  mounted() {
+    console.log("11", this.$store.state.user);
   },
 };
 </script>

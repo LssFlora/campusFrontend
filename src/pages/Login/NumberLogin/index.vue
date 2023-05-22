@@ -58,7 +58,6 @@
 <script>
 import "@/style/loginStyle.css";
 import { serviceAdd } from "@/services/servceAdd";
-import { Form } from "element-ui";
 export default {
   data() {
     var checkCode = (rule, value, callback) => {
@@ -114,9 +113,7 @@ export default {
       const { userName, password, code } = this.ruleForm;
       try {
         await this.$store.dispatch("login", { userName, password, code });
-        if (localStorage.getItem("token")) {
-          this.$router.push("/home");
-        }
+        if (localStorage.getItem("token")) this.$router.push("/home");
       } catch (error) {}
     },
     refresh() {
@@ -128,6 +125,11 @@ export default {
           }?time=${new Date().getTime()}`)
         : this.$message("请输入账号密码");
     },
+  },
+  mounted() {
+    //     if (localStorage.getItem("token")) {
+    //   this.$router.push("/home");
+    // }
   },
 };
 </script>

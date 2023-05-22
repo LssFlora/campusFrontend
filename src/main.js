@@ -10,6 +10,7 @@ import "./style/style/theme/index.css";
 
 
 Vue.config.productionTip = false
+const OSS = require("ali-oss");
 
 new Vue({
   render: h => h(App),

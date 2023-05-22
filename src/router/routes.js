@@ -8,6 +8,19 @@ import Information from "@/pages/Personal/Information"
 import Authentication from "@/pages/Personal/Authentication"
 import ExistAddress from "@/pages/Personal/Address/ExistAddress"
 import NewAddress from "@/pages/Personal/Address/NewAddress"
+import Mine from "@/pages/Mine"
+import MyTask from "@/pages/Mine/MyTask"
+import MyLach from "@/pages/Mine/MyLach"
+import TaskDetail from "@/pages/TaskDetail"
+import TaskList from "@/pages/TaskList"
+import LachTask from "@/pages/LachTask"
+import FixHall from "@/pages/FixHall"
+import FixHistory from "@/pages/FixHall/FixHistory"
+import NewFix from "@/pages/FixHall/NewFix"
+import AnnounceHall from "@/pages/AnnounceHall"
+import AllAnnounce from "@/pages/AnnounceHall/AllAnnounce"
+import NewAnnounce from "@/pages/AnnounceHall/NewAnnounce"
+
 
 
 
@@ -33,6 +46,19 @@ export default [
     {
         path: "/taskHall",
         component: TaskHall,
+        children: [
+            {
+                path: "taskList",
+                component: TaskList
+            },
+            {
+                path: "taskDetail",
+                component: TaskDetail
+            }, {
+                path: "lachTask",
+                component: LachTask
+            }
+        ]
     },
     {
         path: "/personal",
@@ -53,6 +79,67 @@ export default [
                 path: "newAddress",
                 component: NewAddress
             }
+        ]
+    }, {
+        path: "/mine",
+        component: Mine,
+        children: [
+            {
+                path: "myTask",
+                component: MyTask,
+                children: [
+                    {
+                        path: "taskList",
+                        component: TaskList
+                    },
+                    {
+                        path: "taskDetail",
+                        component: TaskDetail
+                    },
+                ]
+            },
+            {
+                path: "myLach",
+                component: MyLach,
+                children: [
+                    {
+                        path: "taskList",
+                        component: TaskList
+                    },
+                    {
+                        path: "taskDetail",
+                        component: TaskDetail
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        path: "/fixHall",
+        component: FixHall,
+        children: [
+            {
+                path: "fixHistory",
+                component: FixHistory
+            },
+            {
+                path: "newFix",
+                component: NewFix
+            },
+        ]
+    },
+    {
+        path: "/announceHall",
+        component: AnnounceHall,
+        children: [
+            {
+                path: "allAnnounce",
+                component: AllAnnounce
+            },
+            {
+                path: "newAnnounce",
+                component: NewAnnounce
+            },
         ]
     },
 

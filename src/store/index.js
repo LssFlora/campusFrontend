@@ -5,10 +5,12 @@ import VueXAlong from 'vuex-along'
 
 Vue.use(Vuex);
 import user from "./user";
+import task from "./task"
 
 export default new Vuex.Store({
     modules: {
-        user
+        user,
+        task
     },
     plugins: [VueXAlong({
         name: 'along',     //存放在localStroage或者sessionStroage 中的名字
