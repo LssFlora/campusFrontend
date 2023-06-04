@@ -1,16 +1,10 @@
 <template>
-  <div>
+  <div style="background-color: #eceef2; height: 100vh">
     <Header></Header>
-    <el-main>
-      <el-row>
-        <el-col :span="24">
-          <!-- <div class="grid-content bg-purple-dark">广告招商中...</div> -->
-          <el-carousel
-            :interval="5000"
-            arrow="always"
-            class="grid-content"
-            style="height: 120px"
-          >
+    <el-main style="padding-top: 20px">
+      <el-row :gutter="20">
+        <el-col :span="16" :offset="4">
+          <el-carousel :interval="5000" arrow="always" class="grid-content">
             <el-carousel-item
               v-for="item in carouselSrc"
               :key="item.id"
@@ -28,14 +22,14 @@
       <el-row :gutter="20">
         <el-col :span="6" v-for="(cardItem, index) in cardSrc" :key="index"
           ><div class="grid-content bg-purple">
-            <el-card :body-style="{ padding: '0px' }">
+            <el-card :body-style="{ padding: '0px' }" class="cardStyle">
               <img
                 :src="cardItem.imgSrc"
                 class="image"
                 @click="cardItem.clickEvent()"
               />
               <div style="padding: 14px">
-                <span>{{ cardItem.title }}</span>
+                <span class="title">{{ cardItem.title }}</span>
                 <div class="bottom clearfix">
                   <time class="time">{{ currentDate }}</time>
                   <el-button
@@ -56,29 +50,14 @@
 
 <script>
 import Header from "@/components/Header";
+import { reqPost } from "@/services/api";
 export default {
   components: { Header },
   data() {
     return {
       currentDate: "",
-      carouselSrc: [
-        {
-          id: 1,
-          imgSrc: require("./assets/c1.png"),
-        },
-        {
-          id: 2,
-          imgSrc: require("./assets/c2.png"),
-        },
-        {
-          id: 3,
-          imgSrc: require("./assets/c3.png"),
-        },
-        {
-          id: 4,
-          imgSrc: require("./assets/c4.png"),
-        },
-      ],
+      imgSrc: [],
+      carouselSrc: [],
       cardSrc: [
         {
           imgSrc: require("./assets/home1.png"),
@@ -124,11 +103,23 @@ export default {
     goAnnounceHall() {
       this.$router.push("/announceHall/allAnnounce");
     },
+    async getPost() {
+      let result = await reqPost();
+      if (result.code == 200) {
+        this.imgSrc = result.data;
+        result.data.forEach((item, index) => {
+          this.carouselSrc = [...this.carouselSrc, { id: index, imgSrc: item }];
+        });
+      }
+    },
+  },
+  mounted() {
+    this.getPost();
   },
 };
 </script>
 
-<style  scoped>
+<style  lang="scss" scoped>
 .el-row {
   margin-bottom: 20px;
 }
@@ -156,7 +147,7 @@ export default {
   color: #475669;
   font-size: 18px;
   opacity: 0.75;
-  line-height: 300px;
+  // line-height: 300px;
   margin: 0;
 }
 
@@ -167,7 +158,17 @@ export default {
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
 }
-.el-carousel__container {
-  height: 120px !important;
+
+::v-deep .el-carousel__container {
+  height: 120px;
+}
+.title {
+  font-size: 20px;
+}
+.cardStyle {
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.03);
+  }
 }
 </style>

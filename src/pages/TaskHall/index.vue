@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background-color: #eceef2; height: 100vh">
     <Header />
     <div class="mainBox">
       <el-aside class="aside"
@@ -9,54 +9,59 @@
         ></el-image
       ></el-aside>
       <el-main class="main">
-        <el-row :gutter="20">
-          <el-page-header @back="goBack" :style="{ display: isBackShow }">
-          </el-page-header>
-          <el-button
-            type="primary"
-            @click="goMyTask"
-            style="
-              position: fixed;
-              right: 15px;
-              top: 200px;
-              width: 80px;
-              height: 80px;
-            "
-            circle
-            size="medium"
-            >我的任务</el-button
-          >
-          <el-button
-            type="primary"
-            @click="goLachTask"
-            style="
-              position: fixed;
-              right: 15px;
-              top: 300px;
-              width: 80px;
-              height: 80px;
-            "
-            circle
-            size="medium"
-            :style="{
-              display: path.indexOf('lachTask') != -1 ? 'none' : 'block',
-            }"
-            >发布任务</el-button
-          >
-        </el-row>
-        <router-view :taskType="0 + ''" :task="task"></router-view>
+        <el-button
+          type="primary"
+          @click="goMyTask"
+          style="
+            position: fixed;
+            right: 15px;
+            top: 200px;
+            width: 80px;
+            height: 80px;
+            z-index: 10000;
+          "
+          circle
+          size="medium"
+          >我的任务</el-button
+        >
+        <el-button
+          type="primary"
+          @click="goLachTask"
+          style="
+            position: fixed;
+            right: 15px;
+            top: 300px;
+            width: 80px;
+            height: 80px;
+            z-index: 10000;
+          "
+          circle
+          size="medium"
+          :style="{
+            display: path.indexOf('lachTask') != -1 ? 'none' : 'block',
+          }"
+          >发布任务</el-button
+        >
+        <router-view
+          :taskType="0 + ''"
+          :task="task"
+          :isLoading="isLoading"
+        ></router-view>
       </el-main>
     </div>
   </div>
 </template>
 
 <script>
+import { reqTaskHall } from "@/services/api";
 import Header from "@/components/Header";
 export default {
   components: { Header },
   data() {
     return {
       isBackShow: "",
+      isLoading: true,
+      task: {},
     };
   },
   watch: {
@@ -76,13 +81,25 @@ export default {
       this.$router.push("/taskHall/lachTask");
     },
     // 获取任务
-    getTask(page) {
-      this.$store.dispatch("getTaskHall", page);
+    async getTask(page) {
+      // 获取任务大厅所有任务
+      let result = await reqTaskHall(page);
+      if (result.code == 200) {
+        this.isLoading = false;
+        this.task = result.data;
+      } else {
+        Message({
+          type: "error",
+          message: "获取失败",
+        });
+      }
     },
     // 获取任务详情并跳转详情页
     goTaskDetail(orderNumber, avatar) {
+      this.isLoading = true;
       this.$store.dispatch("getTaskDetail", orderNumber);
       if (this.$store.state.task.taskDetail) {
+        this.isLoading = false;
         this.task = this.$store.state.task.taskDetail;
         this.$router.push({ path: "/taskDetail", query: { avatar: avatar } });
       }
@@ -92,13 +109,10 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("getTaskHall", 1);
+    this.getTask(1);
     this.isBackShow = "none";
   },
   computed: {
-    task() {
-      return this.$store.state.task.task;
-    },
     path() {
       return this.$route.path;
     },
@@ -122,6 +136,7 @@ export default {
 .main {
   flex: 1 1 75%;
   display: inline-block;
+  padding-top: 0;
 }
 .el-row {
   margin-bottom: 20px;

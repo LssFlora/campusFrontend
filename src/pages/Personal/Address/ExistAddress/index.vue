@@ -1,179 +1,183 @@
 <template>
-  <div>
-    <el-row :gutter="20">
-      <el-col :span="12" :offset="6"
+  <div v-loading="isLoading" element-loading-text="拼命加载中">
+    <el-row :gutter="20" v-for="(address, index) in addressItem" :key="index">
+      <el-col :span="12" :offset="3"
         ><div class="grid-content">
           <el-card
             shadow="always"
             class="addressCard"
-            :body-style="{ padding: '0px', height: '110px' }"
+            :body-style="{
+              padding: '0px',
+              height: '110px',
+              position: 'relative',
+            }"
           >
             <i class="el-icon-s-promotion addressIcon" style="float: left"></i>
             <div class="addressMain">
               <el-row :gutter="20">
-                <el-col :span="4"
+                <el-col :span="6"
                   ><div class="grid-content" style="font-weight: 700">
-                    猫
+                    {{ address.liaisonMan }}
                   </div></el-col
                 >
                 <el-col :span="4"
-                  ><div class="grid-content">16548758361</div></el-col
+                  ><div class="grid-content">
+                    {{ address.phoneNumber }}
+                  </div></el-col
                 >
               </el-row>
               <el-row>
                 <el-col :span="24"
                   ><div class="grid-content">
-                    四川省成都市双流区学府路1段24号
+                    {{ address.address }}
                   </div></el-col
                 >
               </el-row>
             </div>
-            <i class="el-icon-s-tools addressIcon" style="float: right"></i>
-          </el-card></div
-      ></el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="12" :offset="6"
-        ><div class="grid-content">
-          <el-card
-            shadow="always"
-            class="addressCard"
-            :body-style="{ padding: '0px', height: '110px' }"
-          >
-            <i class="el-icon-s-promotion addressIcon" style="float: left"></i>
-            <div class="addressMain">
-              <el-row :gutter="20">
-                <el-col :span="4"
-                  ><div class="grid-content" style="font-weight: 700">
-                    猫
-                  </div></el-col
-                >
-                <el-col :span="4"
-                  ><div class="grid-content">16548758361</div></el-col
-                >
-              </el-row>
-              <el-row>
-                <el-col :span="24"
-                  ><div class="grid-content">
-                    四川省成都市双流区学府路1段24号
-                  </div></el-col
-                >
-              </el-row>
+            <div style="display: right; position: absolute; top: 0; right: 0">
+              <i
+                class="el-icon-edit-outline addressIcon"
+                style="float: right"
+                @click="goEdit(address)"
+              ></i>
+              <i
+                class="el-icon-s-tools addressIcon"
+                style="float: right"
+                :style="{
+                  display: address.status == 0 ? 'inline-block' : 'none',
+                }"
+              ></i>
             </div>
-            <i class="el-icon-s-tools addressIcon" style="float: right"></i>
-          </el-card></div
-      ></el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="12" :offset="6"
-        ><div class="grid-content">
-          <el-card
-            shadow="always"
-            class="addressCard"
-            :body-style="{ padding: '0px', height: '110px' }"
-          >
-            <i class="el-icon-s-promotion addressIcon" style="float: left"></i>
-            <div class="addressMain">
-              <el-row :gutter="20">
-                <el-col :span="4"
-                  ><div class="grid-content" style="font-weight: 700">
-                    猫
-                  </div></el-col
-                >
-                <el-col :span="4"
-                  ><div class="grid-content">16548758361</div></el-col
-                >
-              </el-row>
-              <el-row>
-                <el-col :span="24"
-                  ><div class="grid-content">
-                    四川省成都市双流区学府路1段24号
-                  </div></el-col
-                >
-              </el-row>
-            </div>
-            <i class="el-icon-s-tools addressIcon" style="float: right"></i>
           </el-card></div
       ></el-col>
     </el-row>
     <el-row>
-      <el-col :span="24"
+      <el-col :span="17"
         ><div class="grid-content">
           <el-button type="primary" @click="goNewAddress">添加地址</el-button>
         </div></el-col
       >
     </el-row>
+    <el-dialog title="收货地址" :visible.sync="dialogFormVisible" center>
+      <el-form
+        status-icon
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="联系人" prop="user">
+          <el-input
+            type="text"
+            autocomplete="off"
+            v-model="selectedAddress.liaisonMan"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码" prop="phone">
+          <el-input
+            type="text"
+            autocomplete="off"
+            v-model="selectedAddress.phoneNumber"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="详细地址" prop="detailAdd">
+          <el-input
+            type="text"
+            autocomplete="off"
+            v-model="selectedAddress.address"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="user">
+          <el-radio-group v-model="selectedAddress.sex">
+            <el-radio :label="0">男</el-radio>
+            <el-radio :label="1">女</el-radio>
+            <el-radio :label="2">其他</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item
+          label="设为默认地址？"
+          prop="detailAdd"
+          label-width="110px"
+        >
+          <el-switch
+            style="display: block"
+            v-model="selectedAddress.status"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-text="是"
+            inactive-text="否"
+          >
+          </el-switch>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="subEditedAdd">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { reqAllAddress, reqEditAddress } from "@/services/api";
+import { Message } from "element-ui";
+
 export default {
   data() {
-    var checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("年龄不能为空"));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error("请输入数字值"));
-        } else {
-          if (value < 18) {
-            callback(new Error("必须年满18岁"));
-          } else {
-            callback();
-          }
-        }
-      }, 1000);
-    };
-    var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
-      } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("checkPass");
-        }
-        callback();
-      }
-    };
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    };
     return {
-      ruleForm: {
-        pass: "",
-        checkPass: "",
-        age: "",
+      addressItem: [],
+      isLoading: true,
+      dialogFormVisible: false,
+      formLabelWidth: "120px",
+      addressForm: {
+        address: "",
+        liaisonMan: "",
+        phoneNumber: "",
+        sex: 0,
+        status: 0,
       },
-      rules: {
-        pass: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }],
-        age: [{ validator: checkAge, trigger: "blur" }],
-      },
+      selectedAddress: {},
     };
   },
   methods: {
     goNewAddress() {
       this.$router.push("/personal/newAddress");
     },
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
+    async getAllAddress() {
+      let result = await reqAllAddress();
+      if (result.code == 200) {
+        this.addressItem = result.data;
+        this.isLoading = false;
+      }
+    },
+    goEdit(address) {
+      this.selectedAddress = {
+        ...address,
+        status: address.status == 0 ? true : false,
+      };
+      this.dialogFormVisible = true;
+    },
+    async subEditedAdd() {
+      let result = await reqEditAddress({
+        ...this.selectedAddress,
+        status: this.selectedAddress.status ? 0 : 1,
       });
+      if (result.code == 200) {
+        Message({
+          type: "success",
+          message: "修改成功",
+        });
+        this.getAllAddress();
+      } else {
+        Message({
+          type: "error",
+          message: result.msg,
+        });
+      }
+      this.dialogFormVisible = false;
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
+  },
+  mounted() {
+    this.getAllAddress();
   },
 };
 </script>

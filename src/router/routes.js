@@ -20,6 +20,10 @@ import NewFix from "@/pages/FixHall/NewFix"
 import AnnounceHall from "@/pages/AnnounceHall"
 import AllAnnounce from "@/pages/AnnounceHall/AllAnnounce"
 import NewAnnounce from "@/pages/AnnounceHall/NewAnnounce"
+import MyAnnounce from "@/pages/AnnounceHall/MyAnnounce"
+import Wallet from "@/pages/Wallet"
+import Complaint from "@/pages/Complaint"
+
 
 
 
@@ -90,7 +94,7 @@ export default [
                 children: [
                     {
                         path: "taskList",
-                        component: TaskList
+                        component: TaskList,
                     },
                     {
                         path: "taskDetail",
@@ -140,7 +144,19 @@ export default [
                 path: "newAnnounce",
                 component: NewAnnounce
             },
+            {
+                path: "myAnnounce",
+                component: MyAnnounce
+            },
         ]
+    },
+    {
+        path: "/wallet",
+        component: Wallet
+    },
+    {
+        path: "/complaint",
+        component: Complaint
     },
 
     // 页面重定向，项目跑起来时，访问/立马回到首页

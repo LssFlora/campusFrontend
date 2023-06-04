@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-menu
-      default-active="4"
+      :default-active="selectedMenu"
       style="float: left; width: 20%"
       @select="handleSelect"
     >
@@ -23,46 +23,63 @@
       </el-menu-item>
     </el-menu>
     <el-card class="box-card">
-      <router-view :taskType="this.selectedMenu" :task="task"></router-view>
+      <router-view
+        :taskType="this.selectedMenu"
+        :task="task"
+        :isLoading="isLoading"
+      ></router-view>
     </el-card>
   </div>
 </template>
 
 <script>
+import { Message } from "element-ui";
+import { reqTaskByStatus } from "@/services/api";
 export default {
   data() {
     return {
       selectedMenu: "4",
+      task: {},
+      isLoading: true,
     };
   },
   methods: {
     handleSelect(key, keyPath) {
+      this.isLoading = true;
+      this.selectedMenu = key;
       switch (key) {
         case "4":
-          this.$store.dispatch("getTaskByStatus", 2);
+          this.getTaskByStatus("1,2");
           break;
         case "5":
-          this.$store.dispatch("getTaskByStatus", 0);
+          this.getTaskByStatus(0);
           break;
         case "6":
-          this.$store.dispatch("getTaskByStatus", 3);
+          this.getTaskByStatus(3);
           break;
         case "7":
-          this.$store.dispatch("getTaskByStatus", 4);
+          this.getTaskByStatus(4);
           break;
         default:
           break;
       }
     },
+    // 根据状态获取我的发布任务
+    async getTaskByStatus(status) {
+      let result = await reqTaskByStatus(status);
+      if (result.code == 200) {
+        this.task = result.data;
+        this.isLoading = false;
+      } else {
+        Message({
+          type: "error",
+          message: "获取失败",
+        });
+      }
+    },
   },
   mounted() {
-    this.$store.dispatch("getTaskByStatus", 2);
-  },
-  computed: {
-    task() {
-      console.log("ppp", this.$store.state.task.task);
-      return this.$store.state.task.task;
-    },
+    this.getTaskByStatus("1,2");
   },
 };
 </script>

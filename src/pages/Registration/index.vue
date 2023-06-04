@@ -12,68 +12,54 @@
         label-width="100px"
         class="demo-ruleForm"
       >
-        <el-form-item label="账号名" prop="pass" size="mini">
+        <el-form-item label="用户名" prop="pass" size="small">
           <el-input
             type="text"
-            v-model="ruleForm.phone"
+            v-model="ruleForm.userName"
             autocomplete="off"
             style="width: 80%; float: left"
           ></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" prop="pass" size="mini">
-          <el-input
-            type="email"
-            v-model="ruleForm.phone"
-            autocomplete="off"
-            style="width: 80%; float: left"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="pass" size="mini">
+        <el-form-item label="密码" prop="pass" size="small">
           <el-input
             type="password"
-            v-model="ruleForm.phone"
+            v-model="ruleForm.password"
             autocomplete="off"
             style="width: 80%; float: left"
           ></el-input>
         </el-form-item>
-        <el-form-item label="再次输入密码" prop="pass" size="mini">
-          <el-input
-            type="password"
-            v-model="ruleForm.phone"
-            autocomplete="off"
-            style="width: 80%; float: left"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="验证码" prop="checkPass" size="mini">
+        <el-form-item label="验证码" prop="checkPass" size="small">
           <el-input
             type="text"
-            v-model="ruleForm.validate"
+            v-model="ruleForm.code"
             autocomplete="off"
             style="width: 50%; float: left"
           ></el-input>
-          <el-button
-            type="primary"
-            @click="getValidation('ruleForm')"
+          <el-image
+            src="https://campus-help-picture.oss-cn-beijing.aliyuncs.com/Login/Code/clickGetCode.png"
             class="validateBtn"
-            >发送验证码</el-button
-          >
+            fit="cover"
+            @click.native="refresh"
+            id="codeImg"
+          ></el-image>
         </el-form-item>
         <el-form-item style="margin-top: 20px; margin-bottom: 5px">
-          <el-button
-            type="primary"
-            @click="submitForm('ruleForm')"
-            class="loginBtn"
+          <el-button type="primary" @click="submitForm" class="loginBtn"
             >注册</el-button
           >
         </el-form-item>
-        <el-button type="text" @click="goNumberLogin">去登录</el-button></el-button>
+        <el-button type="text" @click="goNumberLogin">账号登录</el-button>
       </el-form>
     </el-card>
   </div>
 </template>
 
 <script>
+import { reqRegi } from "@/services/api";
 import "@/style/loginStyle.css";
+import { Message } from "element-ui";
+import { serviceAdd } from "@/services/servceAdd";
+
 export default {
   data() {
     var checkAge = (rule, value, callback) => {
@@ -129,15 +115,32 @@ export default {
     goNumberLogin() {
       this.$router.push("/numberLogin");
     },
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    goPhoneLogin() {
+      this.$router.push("/phoneLogin");
+    },
+    async submitForm() {
+      let result = await reqRegi(this.ruleForm);
+      if (result.code == 200) {
+        Message({
+          type: "success",
+          message: "注册成功，请登录！",
+        });
+        this.$router.push("/numberLogin");
+      } else {
+        Message({
+          type: "error",
+          message: result.msg,
+        });
+      }
+    },
+    refresh() {
+      this.ruleForm.userName
+        ? (document.getElementById(
+            "codeImg"
+          ).src = `${serviceAdd}/user/login/getCode/${
+            this.ruleForm.userName
+          }?time=${new Date().getTime()}`)
+        : this.$message("请输入账号密码");
     },
   },
 };
@@ -170,6 +173,7 @@ export default {
 .card-header-font {
   font-size: 20px;
   font-weight: 500;
+  color: #e6a23c;
 }
 .loginBtn {
   margin-left: -100px;
@@ -178,8 +182,11 @@ export default {
 }
 .validateBtn {
   width: 30%;
+  height: 33px;
   float: left;
   margin-left: 3px;
   border-radius: 15px;
+  cursor: pointer;
+  /* border: 1px solid red; */
 }
 </style>

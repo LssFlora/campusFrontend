@@ -48,7 +48,6 @@
             >登录</el-button
           >
         </el-form-item>
-        <el-button type="text" @click="goPhoneLogin">手机号登录</el-button>
         <el-button type="text" @click="goRegistration">去注册</el-button>
       </el-form>
     </el-card>
@@ -161,6 +160,7 @@ export default {
 .card-header-font {
   font-size: 20px;
   font-weight: 500;
+  color: #e6a23c;
 }
 .loginBtn {
   margin-left: -100px;

@@ -19,47 +19,63 @@
       </el-menu-item>
     </el-menu>
     <el-card class="box-card">
-      <router-view :taskType="this.selectedMenu" :task="task"></router-view>
+      <router-view
+        :taskType="this.selectedMenu"
+        :task="task"
+        :isLoading="isLoading"
+      ></router-view>
     </el-card>
   </div>
 </template>
 
 <script>
 import TaskList from "@/pages/TaskList";
+import { Message } from "element-ui";
+import { reqMyTaskByStatus } from "@/services/api";
+
 export default {
   components: { TaskList },
   data() {
     return {
       selectedMenu: "1",
+      task: {},
+      isLoading: true,
     };
   },
   methods: {
     handleSelect(key, keyPath) {
+      this.isLoading = true;
       this.selectedMenu = key;
-      console.log("HUG", this.selectedMenu);
       switch (key) {
         case "1":
-          this.$store.dispatch("getMyTaskByStatus", 2);
+          this.getTaskByStatus(2);
           break;
         case "2":
-          this.$store.dispatch("getMyTaskByStatus", 3);
+          this.getTaskByStatus(3);
           break;
         case "3":
-          this.$store.dispatch("getMyTaskByStatus", 4);
+          this.getTaskByStatus(4);
           break;
-
         default:
           break;
       }
     },
+    // 根据状态获取我的抢单任务
+    async getTaskByStatus(status) {
+      let result = await reqMyTaskByStatus(status);
+      if (result.code == 200) {
+        this.task = result.data;
+        this.isLoading = false;
+      } else {
+        Message({
+          type: "error",
+          message: "获取失败",
+        });
+      }
+    },
   },
   mounted() {
-    this.$store.dispatch("getTaskByStatus", 2);
-  },
-  computed: {
-    task() {
-      return this.$store.state.task.task;
-    },
+    this.getTaskByStatus(2);
   },
 };
 </script>

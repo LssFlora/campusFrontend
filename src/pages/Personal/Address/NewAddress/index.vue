@@ -1,54 +1,70 @@
 <template>
   <div>
-    <el-row :gutter="10">
-      <el-col :xs="8" :sm="6" :md="4" :lg="3" :xl="1"
-        ><div class="grid-content"></div
-      ></el-col>
+    <el-row :gutter="24">
       <el-col :xs="4" :sm="6" :md="8" :lg="9" :xl="11"
         ><div class="grid-content bg-purple-light">
-          <el-divider>添加地址</el-divider>
-          <el-form
-            :model="ruleForm"
-            status-icon
-            :rules="rules"
-            ref="ruleForm"
-            label-width="100px"
-            class="demo-ruleForm"
-          >
-            <el-form-item label="收货人" prop="user">
-              <el-input
-                type="text"
-                v-model="ruleForm.pass"
-                autocomplete="off"
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="手机号码" prop="phone">
-              <el-input
-                type="text"
-                v-model="ruleForm.checkPass"
-                autocomplete="off"
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="所在地区" prop="region">
-              <el-cascader
-                v-model="value"
-                :options="options"
-                @change="handleChange"
-              ></el-cascader>
-            </el-form-item>
-            <el-form-item label="详细地址" prop="detailAdd">
-              <el-input
-                type="text"
-                v-model="ruleForm.checkPass"
-                autocomplete="off"
-              ></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('ruleForm')"
-                >保存</el-button
+          <el-card class="box-card">
+            <el-page-header
+              @back="goBack"
+              :style="{ display: isBackShow }"
+              style="margin-bottom: 10px"
+              content="新建地址"
+            >
+            </el-page-header>
+            <el-form
+              status-icon
+              ref="ruleForm"
+              label-width="100px"
+              class="demo-ruleForm"
+            >
+              <el-form-item label="联系人" prop="user">
+                <el-input
+                  type="text"
+                  autocomplete="off"
+                  v-model="addressForm.liaisonMan"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="手机号码" prop="phone">
+                <el-input
+                  type="text"
+                  autocomplete="off"
+                  v-model="addressForm.phoneNumber"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="详细地址" prop="detailAdd">
+                <el-input
+                  type="text"
+                  autocomplete="off"
+                  v-model="addressForm.address"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="性别" prop="user">
+                <el-radio-group v-model="addressForm.sex">
+                  <el-radio :label="0">男</el-radio>
+                  <el-radio :label="1">女</el-radio>
+                  <el-radio :label="2">其他</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item
+                label="设为默认地址？"
+                prop="detailAdd"
+                label-width="110px"
               >
-            </el-form-item>
-          </el-form>
+                <el-switch
+                  style="display: block"
+                  v-model="addressForm.status"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  active-text="是"
+                  inactive-text="否"
+                >
+                </el-switch>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="putNewAdd">保存</el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
         </div></el-col
       >
     </el-row>
@@ -56,339 +72,45 @@
 </template>
 
 <script>
+import { reqNewAddress } from "@/services/api";
+import { Message } from "element-ui";
+
 export default {
   data() {
-    var checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("年龄不能为空"));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error("请输入数字值"));
-        } else {
-          if (value < 18) {
-            callback(new Error("必须年满18岁"));
-          } else {
-            callback();
-          }
-        }
-      }, 1000);
-    };
-    var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
-      } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("checkPass");
-        }
-        callback();
-      }
-    };
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    };
     return {
-      ruleForm: {
-        pass: "",
-        checkPass: "",
-        age: "",
+      addressForm: {
+        address: "",
+        liaisonMan: "",
+        phoneNumber: "",
+        sex: 0,
+        status: "",
       },
-      rules: {
-        pass: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }],
-        age: [{ validator: checkAge, trigger: "blur" }],
-      },
-      value: [],
-      options: [
-        {
-          value: "zhinan",
-          label: "指南",
-          children: [
-            {
-              value: "shejiyuanze",
-              label: "设计原则",
-              children: [
-                {
-                  value: "yizhi",
-                  label: "一致",
-                },
-                {
-                  value: "fankui",
-                  label: "反馈",
-                },
-                {
-                  value: "xiaolv",
-                  label: "效率",
-                },
-                {
-                  value: "kekong",
-                  label: "可控",
-                },
-              ],
-            },
-            {
-              value: "daohang",
-              label: "导航",
-              children: [
-                {
-                  value: "cexiangdaohang",
-                  label: "侧向导航",
-                },
-                {
-                  value: "dingbudaohang",
-                  label: "顶部导航",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          value: "zujian",
-          label: "组件",
-          children: [
-            {
-              value: "basic",
-              label: "Basic",
-              children: [
-                {
-                  value: "layout",
-                  label: "Layout 布局",
-                },
-                {
-                  value: "color",
-                  label: "Color 色彩",
-                },
-                {
-                  value: "typography",
-                  label: "Typography 字体",
-                },
-                {
-                  value: "icon",
-                  label: "Icon 图标",
-                },
-                {
-                  value: "button",
-                  label: "Button 按钮",
-                },
-              ],
-            },
-            {
-              value: "form",
-              label: "Form",
-              children: [
-                {
-                  value: "radio",
-                  label: "Radio 单选框",
-                },
-                {
-                  value: "checkbox",
-                  label: "Checkbox 多选框",
-                },
-                {
-                  value: "input",
-                  label: "Input 输入框",
-                },
-                {
-                  value: "input-number",
-                  label: "InputNumber 计数器",
-                },
-                {
-                  value: "select",
-                  label: "Select 选择器",
-                },
-                {
-                  value: "cascader",
-                  label: "Cascader 级联选择器",
-                },
-                {
-                  value: "switch",
-                  label: "Switch 开关",
-                },
-                {
-                  value: "slider",
-                  label: "Slider 滑块",
-                },
-                {
-                  value: "time-picker",
-                  label: "TimePicker 时间选择器",
-                },
-                {
-                  value: "date-picker",
-                  label: "DatePicker 日期选择器",
-                },
-                {
-                  value: "datetime-picker",
-                  label: "DateTimePicker 日期时间选择器",
-                },
-                {
-                  value: "upload",
-                  label: "Upload 上传",
-                },
-                {
-                  value: "rate",
-                  label: "Rate 评分",
-                },
-                {
-                  value: "form",
-                  label: "Form 表单",
-                },
-              ],
-            },
-            {
-              value: "data",
-              label: "Data",
-              children: [
-                {
-                  value: "table",
-                  label: "Table 表格",
-                },
-                {
-                  value: "tag",
-                  label: "Tag 标签",
-                },
-                {
-                  value: "progress",
-                  label: "Progress 进度条",
-                },
-                {
-                  value: "tree",
-                  label: "Tree 树形控件",
-                },
-                {
-                  value: "pagination",
-                  label: "Pagination 分页",
-                },
-                {
-                  value: "badge",
-                  label: "Badge 标记",
-                },
-              ],
-            },
-            {
-              value: "notice",
-              label: "Notice",
-              children: [
-                {
-                  value: "alert",
-                  label: "Alert 警告",
-                },
-                {
-                  value: "loading",
-                  label: "Loading 加载",
-                },
-                {
-                  value: "message",
-                  label: "Message 消息提示",
-                },
-                {
-                  value: "message-box",
-                  label: "MessageBox 弹框",
-                },
-                {
-                  value: "notification",
-                  label: "Notification 通知",
-                },
-              ],
-            },
-            {
-              value: "navigation",
-              label: "Navigation",
-              children: [
-                {
-                  value: "menu",
-                  label: "NavMenu 导航菜单",
-                },
-                {
-                  value: "tabs",
-                  label: "Tabs 标签页",
-                },
-                {
-                  value: "breadcrumb",
-                  label: "Breadcrumb 面包屑",
-                },
-                {
-                  value: "dropdown",
-                  label: "Dropdown 下拉菜单",
-                },
-                {
-                  value: "steps",
-                  label: "Steps 步骤条",
-                },
-              ],
-            },
-            {
-              value: "others",
-              label: "Others",
-              children: [
-                {
-                  value: "dialog",
-                  label: "Dialog 对话框",
-                },
-                {
-                  value: "tooltip",
-                  label: "Tooltip 文字提示",
-                },
-                {
-                  value: "popover",
-                  label: "Popover 弹出框",
-                },
-                {
-                  value: "card",
-                  label: "Card 卡片",
-                },
-                {
-                  value: "carousel",
-                  label: "Carousel 走马灯",
-                },
-                {
-                  value: "collapse",
-                  label: "Collapse 折叠面板",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          value: "ziyuan",
-          label: "资源",
-          children: [
-            {
-              value: "axure",
-              label: "Axure Components",
-            },
-            {
-              value: "sketch",
-              label: "Sketch Templates",
-            },
-            {
-              value: "jiaohu",
-              label: "组件交互文档",
-            },
-          ],
-        },
-      ],
+      isBackShow: "",
     };
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert("submit!");
-          this.$router.push("/personal/existAddress");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    async putNewAdd() {
+      this.addressForm = {
+        ...this.addressForm,
+        status: !this.addressForm.status ? 1 : 0,
+      };
+      let result = await reqNewAddress(this.addressForm);
+      if (result.code == 200) {
+        Message({
+          type: "success",
+          message: "创建成功",
+        });
+        this.$router.push("/personal/existAddress");
+      } else {
+        Message({
+          type: "error",
+          message: result.msg,
+        });
+      }
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    goBack() {
+      // this.$router.go(-1);
+      this.$router.back();
     },
   },
 };
@@ -408,5 +130,25 @@ export default {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
+}
+.text {
+  font-size: 14px;
+}
+
+.item {
+  margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+
+.box-card {
+  width: 480px;
 }
 </style>

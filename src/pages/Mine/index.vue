@@ -4,7 +4,7 @@
     <el-row>
       <el-col :span="24">
         <el-menu
-          :default-active="activeIndex"
+          :default-active="path.indexOf('myTask') == -1 ? '2' : '1'"
           class="el-menu-demo"
           mode="horizontal"
           background-color="#545c64"
@@ -41,6 +41,11 @@ export default {
     },
     goMyLach() {
       this.$router.push("/mine/myLach/taskList");
+    },
+  },
+  computed: {
+    path() {
+      return this.$route.path;
     },
   },
 };

@@ -14,7 +14,6 @@ const actions = {
             localStorage.setItem("token", "")
         let result = await reqLogin({ code, userName, password });
         if (result.code == 200) {
-            console.log("result", result);
             localStorage.setItem("token", result.data.token)
             Message({
                 type: "success",
@@ -48,7 +47,6 @@ const actions = {
     async getUserInfo({ commit }) {
         let result = await reqGetInfo()
         if (result.code == 200) {
-            console.log("222", result.data);
             commit("GETUSERINFO", result.data)
         }
     },
@@ -70,7 +68,6 @@ const actions = {
     },
     // 上传头像
     async submitAva({ commit }, pictureUrl) {
-        console.log("url", pictureUrl);
         let result = await reqsubmitAva(pictureUrl)
         if (result.code == 200) {
             Message({
@@ -91,12 +88,10 @@ const mutations = {
     LOGIN(state, data) {
         // state.token = token
         state.userInfo = data.useInfo
-        console.log("userInfo", state.userInfo);
-        // console.log("state token", token);
     },
     // 获取用户信息
     GETUSERINFO(state, data) {
-        state.userInfo = data
+        state.userInfo = data.user
     },
     // 登出
     LOGINOUT(state) {

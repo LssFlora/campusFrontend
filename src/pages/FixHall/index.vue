@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background-color: #eceef2; height: 100%">
     <Header />
     <router-view></router-view>
     <el-button
@@ -27,6 +27,9 @@ import Header from "@/components/Header";
 
 export default {
   components: { Header },
+  data() {
+    return {};
+  },
   methods: {
     goNewFix() {
       this.$router.push("/fixHall/newFix");

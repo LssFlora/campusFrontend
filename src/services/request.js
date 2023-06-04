@@ -57,7 +57,6 @@ requests.interceptors.response.use(
 
   async error => {
     // token失效的被动处理
-    console.log(error)
     if (error.response.data.code === 4111) {
       localStorage.setItem("token", "")
       await store.dispatch('logOut')

@@ -1,10 +1,16 @@
 <template>
-  <div>
+  <div style="background-color: #eceef2">
     <Header></Header>
     <div class="mainBox">
       <el-aside class="aside">
         <el-menu
-          default-active="2"
+          :default-active="
+            path.indexOf('information') != -1
+              ? '2'
+              : path.indexOf('Address') != -1
+              ? '3'
+              : '4'
+          "
           class="el-menu-vertical-demo"
           background-color="#545c64"
           text-color="#fff"
@@ -17,10 +23,6 @@
           <el-menu-item index="3" @click="goAddress">
             <i class="el-icon-s-promotion"></i>
             <span slot="title">地址设置</span>
-          </el-menu-item>
-          <el-menu-item index="4" @click="goAuthentication">
-            <i class="el-icon-warning"></i>
-            <span slot="title">身份认证</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -46,6 +48,11 @@ export default {
     },
     goAuthentication() {
       this.$router.push("/personal/authentication");
+    },
+  },
+  computed: {
+    path() {
+      return this.$route.path;
     },
   },
 };

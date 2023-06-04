@@ -1,4 +1,4 @@
-import { reqTaskHall, reqTaskDetail, reqTaskByStatus, reqMyTaskByStatus } from "@/services/api"
+import { reqTaskHall, reqTaskDetail, reqTaskByStatus, reqMyTaskByStatus, reqGetRate } from "@/services/api"
 import { Message } from "element-ui";
 
 
@@ -7,7 +7,7 @@ const actions = {
     async getTaskHall({ commit }, page) {
         let result = await reqTaskHall(page)
         if (result.code == 200) {
-            commit("GETTASKHALL", result.data)
+            commit("GETTASKHALL", result.data || [])
         } else {
             Message({
                 type: "error",
@@ -16,11 +16,24 @@ const actions = {
         }
     },
     // 获取任务详情
-    async getTaskDetail({ commit }, orderNumber) {
+    async getTaskDetail({ commit, state }, orderNumber) {
+        state.taskDetail ? state.taskDetail = [] : ""
         let result = await reqTaskDetail(orderNumber)
         if (result.code == 200) {
-            console.log("result", result.data);
-            commit("GETTASKDETAIL", result.data)
+            commit("GETTASKDETAIL", result.data || {})
+        } else {
+            Message({
+                type: "error",
+                message: "获取失败"
+            });
+        }
+    },
+    // 获取评价
+    async getRate({ commit, state }, orderNumber) {
+        state.rate ? state.rate = {} : ""
+        let result = await reqGetRate(orderNumber)
+        if (result.code == 200) {
+            commit("GETRATE", result.data || null)
         } else {
             Message({
                 type: "error",
@@ -32,7 +45,7 @@ const actions = {
     async getTaskByStatus({ commit }, status) {
         let result = await reqTaskByStatus(status)
         if (result.code == 200) {
-            commit("GETTASKBYSTATUS", result.data)
+            commit("GETTASKBYSTATUS", result.data || {})
         } else {
             Message({
                 type: "error",
@@ -44,7 +57,7 @@ const actions = {
     async getMyTaskByStatus({ commit }, status) {
         let result = await reqMyTaskByStatus(status)
         if (result.code == 200) {
-            commit("GETMYTASKBYSTATUS", result.data)
+            commit("GETMYTASKBYSTATUS", result.data || [])
         } else {
             Message({
                 type: "error",
@@ -61,18 +74,21 @@ const mutations = {
     // 获取任务详情
     GETTASKDETAIL(state, data) {
         state.taskDetail = data
-        console.log("state.taskDetail", state.taskDetail);
     },
     GETTASKBYSTATUS(state, data) {
         state.task = data
     },
     GETMYTASKBYSTATUS(state, data) {
         state.task = data
+    },
+    GETRATE(state, data) {
+        state.rate = data
     }
 }
 const state = {
     task: [],
-    taskDetail: []
+    taskDetail: [],
+    rate: {}
 
 }
 const getters = {

@@ -1,66 +1,88 @@
 <template>
-  <div style="width: 100%">
-    <el-form ref="form" :model="form" label-width="80px" class="formStyle">
-      <el-form-item>
-        <div class="block">
-          <el-avatar :size="70" :src="form.avatar"></el-avatar>
-          <input
-            type="file"
-            ref="imageInput"
+  <div style="width: 60%; margin-left: 35px">
+    <el-card class="box-card">
+      <el-form ref="form" :model="form" label-width="80px" class="formStyle">
+        <el-form-item>
+          <div class="block">
+            <el-avatar :size="70" :src="form.avatar"></el-avatar>
+            <input
+              type="file"
+              ref="imageInput"
+              :style="{ display: isShow ? 'inline-block' : 'none' }"
+            />
+          </div>
+        </el-form-item>
+        <div></div>
+        <el-form-item label="评分" size="small">
+          <el-rate
+            v-model="form.rate"
+            :colors="colors"
+            disabled
+            show-score
+            text-color="#ff9900"
+            score-template="{value}"
+          >
+          </el-rate>
+        </el-form-item>
+        <el-form-item label="昵称" size="small">
+          <span :style="{ display: isShow ? 'none' : 'inline-block' }">{{
+            form.nickName
+          }}</span>
+          <el-input
+            type="text"
+            v-model="form.nickName"
             :style="{ display: isShow ? 'inline-block' : 'none' }"
-          />
-          <button
-            v-on:click="upload()"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="性别" size="small">
+          <span :style="{ display: isShow ? 'none' : 'inline-block' }">{{
+            form.sex
+          }}</span>
+          <el-radio-group
+            v-model="form.sex"
+            :disabled="!isShow"
             :style="{ display: isShow ? 'inline-block' : 'none' }"
           >
-            提交
-          </button>
-        </div>
-      </el-form-item>
-      <el-form-item label="评分" size="small">
-        <el-rate :value="form.rate" :colors="colors" disabled> </el-rate>
-      </el-form-item>
-      <el-form-item label="昵称" size="small">
-        <el-input
-          type="text"
-          v-model="form.nickName"
-          :disabled="!isShow"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="性别" size="small">
-        <el-radio-group v-model="form.sex" :disabled="!isShow">
-          <el-radio :label="0">男</el-radio>
-          <el-radio :label="1">女</el-radio>
-          <el-radio :label="2">其他</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="手机号" size="small">
-        <el-input
-          type="text"
-          v-model="form.phoneNumber"
-          :disabled="!isShow"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="邮箱" size="small">
-        <el-input
-          type="email"
-          v-model="form.email"
-          :disabled="!isShow"
-        ></el-input>
-      </el-form-item>
+            <el-radio :label="'男'">男</el-radio>
+            <el-radio :label="'女'">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="手机号" size="small">
+          <span :style="{ display: isShow ? 'none' : 'inline-block' }">{{
+            form.phoneNumber
+          }}</span>
+          <el-input
+            type="text"
+            v-model="form.phoneNumber"
+            :disabled="!isShow"
+            :style="{ display: isShow ? 'inline-block' : 'none' }"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" size="small">
+          <span :style="{ display: isShow ? 'none' : 'inline-block' }">{{
+            form.email
+          }}</span>
+          <el-input
+            type="email"
+            v-model="form.email"
+            :disabled="!isShow"
+            :style="{ display: isShow ? 'inline-block' : 'none' }"
+          ></el-input>
+        </el-form-item>
 
-      <el-form-item>
-        <el-button
-          type="primary"
-          @click="setIsShow"
-          :style="{ display: isShow ? 'none' : 'inline-block' }"
-          >编辑</el-button
-        >
-      </el-form-item>
-      <el-form-item :style="{ display: isShow ? 'block' : 'none' }">
-        <el-button type="primary" @click="onSubmit">保存</el-button>
-      </el-form-item>
-    </el-form>
+        <el-form-item>
+          <el-button
+            type="primary"
+            @click="setIsShow"
+            :style="{ display: isShow ? 'none' : 'inline-block' }"
+            >编辑</el-button
+          >
+        </el-form-item>
+        <el-form-item :style="{ display: isShow ? 'block' : 'none' }">
+          <el-button type="primary" @click="onSubmit">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
@@ -85,8 +107,8 @@ export default {
     };
   },
   mounted() {
-    this.form = this.$store.state.user.userInfo;
-    console.log("form", this.form);
+    this.$store.dispatch("getUserInfo");
+    this.getForm();
   },
   computed: {
     token() {
@@ -100,13 +122,12 @@ export default {
     },
   },
   methods: {
+    getForm() {
+      const user = this.$store.state.user.userInfo;
+      this.form = { ...user, sex: user.sex == 0 ? "女" : "男" };
+    },
     // 更新信息
     async onSubmit() {
-      // console.log("submit!");
-      await this.$store.dispatch("submitInfo", this.form);
-      this.isShow = !this.isShow;
-    },
-    upload() {
       let client = new OSS({
         // 以下信息可以在阿里云上查看
         region: "oss-cn-beijing", // 服务器集群地区
@@ -117,19 +138,32 @@ export default {
         bucket: "campus-help-picture", // 阿里云上存储的 Bucket名称
       });
       const file = this.$refs.imageInput.files[0]; // 获取文件
-      const filePathArr = file.name.split(".");
-      let path = `/user/avatar/${this.$store.state.user.userInfo.id}.${
-        filePathArr[filePathArr.length - 1]
-      }`; // 路径以及文件名，根据需求定义
-      var response = client.put(path, file); // 上传并获取响应
-      response.then((res) => {
-        // 获取返回的文件url
-        // console.log(res.url)
-        this.headPortraitSrc = res.url; // 并设置给页面上图片所绑定的源
-        this.$store.dispatch("submitAva", res.url);
-      });
-      // console.log(response)
+      if (file) {
+        const filePathArr = file?.name.split(".");
+        let path = `/user/avatar/${this.$store.state.user.userInfo.id}.${
+          filePathArr[filePathArr.length - 1]
+        }`; // 路径以及文件名，根据需求定义
+        var response = client.put(path, file); // 上传并获取响应
+        await response.then((res) => {
+          // 获取返回的文件url
+          this.headPortraitSrc = res.url; // 并设置给页面上图片所绑定的源
+          this.$store.dispatch("submitAva", res.url);
+          console.log("ff", this.form);
+          this.$store.dispatch("submitInfo", {
+            ...this.form,
+            sex: this.form.sex == "男" ? 1 : 0,
+          });
+          this.isShow = !this.isShow;
+        });
+      } else {
+        this.$store.dispatch("submitInfo", {
+          ...this.form,
+          sex: this.form.sex == "男" ? 1 : 0,
+        });
+        this.isShow = !this.isShow;
+      }
     },
+
     setIsShow() {
       this.isShow = !this.isShow;
     },

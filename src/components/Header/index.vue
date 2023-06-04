@@ -28,6 +28,12 @@
         <div style="margin-top: 7px" @click="goPersonal">
           <el-avatar :src="avaUrl"></el-avatar>
         </div>
+        <div style="margin-right: 12px" @click="goWallet">
+          <i class="el-icon-wallet"></i>
+        </div>
+        <div style="margin-right: 17px" @click="goComplaint">
+          <i class="el-icon-service"></i>
+        </div>
       </div>
     </el-header>
   </div>
@@ -40,6 +46,7 @@ export default {
       return this.$store.state.user.userInfo.nickName;
     },
     avaUrl() {
+      console.log("header", this.$store.state.user.userInfo);
       return this.$store.state.user.userInfo.avatar;
     },
   },
@@ -73,17 +80,23 @@ export default {
     goAnnounce() {
       this.$router.push("/announceHall/allAnnounce");
     },
+    goWallet() {
+      this.$router.push("/wallet");
+    },
+    goComplaint() {
+      this.$router.push("/complaint");
+    },
   },
-  mounted() {
-    console.log("11", this.$store.state.user);
-  },
+  mounted() {},
 };
 </script>
 
 <style  scoped>
 .header {
-  background-color: #eceef2;
+  background-color: #ffffff;
   position: relative;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
 }
 .leftItem {
   font-size: 32px;
@@ -114,7 +127,7 @@ export default {
   right: 0;
   font-size: 32px;
   line-height: 60px;
-  width: 272px;
+  width: 400px;
   float: right;
   color: #e6a23c;
 }
